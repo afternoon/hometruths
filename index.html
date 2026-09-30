@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Home Truths">
+<meta name="theme-color" content="#00E5FF">
+<title>Home Truths</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; }
+  body {
+    background: #00E5FF;
+    color: #000;
+    font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    text-align: center; padding: 24px;
+    user-select: none; -webkit-user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation; cursor: pointer; overflow: hidden;
+    transition: background-color 0.15s linear, color 0.15s linear;
+  }
+  .pill {
+    background: rgba(255,255,255,0.35);
+    padding: 8px 20px; border-radius: 999px;
+    font-size: clamp(14px, 3.5vw, 22px); font-weight: 700;
+    letter-spacing: 0.08em; text-transform: uppercase;
+    margin-bottom: 24px;
+  }
+  .prompt {
+    font-size: clamp(48px, 14vw, 140px); font-weight: 900;
+    line-height: 1.02; letter-spacing: -0.02em; max-width: 12ch;
+    overflow-wrap: break-word;
+  }
+</style>
+</head>
+<body>
+  <div class="pill" id="label">Tap anywhere</div>
+  <div class="prompt" id="prompt">Home Truths</div>
+
+<script>
+// ===== PROMPTS — edit freely =====
+const TECHNICAL = [
+  "Filter sweep", "High-pass the mix", "Drop the kick", "Reverb throw",
+  "Delay feedback", "Stutter it", "Sidechain harder", "Mute a channel",
+  "Resample", "Tape stop", "Build a turnaround", "More tops",
+  "Not four four", "Extend the release", "Reverb wash",
+  "Switch melodic / atonal", "One note rhythm", "Longer sequence",
+  "Acoustic percussion", "Time to acid", "Delay modulation",
+  "Accent groove", "Add seventh chords", "Found sound", "Call and response"
+];
+
+const GENRE = [
+  "Rolling bassline", "Four on the floor", "Open hats", "Piano stabs",
+  "Vocal chop", "Clap on 2 & 4", "Organ chords", "Disco loop", "Sub bass",
+  "Shuffle the groove", "Vocal sample", "Jazz time", "Jazz instrumentation",
+  "Chicago", "New York", "Detroit", "Long chord progression", "Layer the riff",
+  "Shuffled hi-hats", "Diva vocal hook", "Gospel organ", "Filtered disco loop",
+  "Stacked claps", "Bright stab riff", "Dubby chord echo", "Congas over kick",
+  "Deep pad wash", "Climbing piano roll", "High strings", "Off kilter"
+];
+
+const OBLIQUE = [
+  "Contrast", "Open vs closed", "Tear it down", "Less is more",
+  "Repeat to hypnotise", "Break the pattern", "One more layer", "Leave a gap",
+  "Go wrong on purpose", "Trust the loop", "Square", "Round", "Ridiculous",
+  "Tight", "Freak", "Mellow", "Space", "Minimal", "Maximal", "Reverse",
+  "Human vs machine", "The first idea", "Hurry", "Wait", "Wrong is right",
+  "One becomes two", "Subtract", "Repeat differently", "Steal from yourself"
+];
+
+const ARTISTS = [
+  "Kerri", "Ian Pooley", "Bangalter", "Cassius", "Cajmere",
+  "Armand Van Helden", "Barry Can't Swim", "Ricardo Villalobos",
+  "Robert Hood", "Richie Hawtin", "Louie Vega", "Chez Damier",
+  "Omar-S", "Theo Parrish", "Moodymann", "Herbert", "Kaytranada"
+];
+
+// ===== COLOURS — flat and bright; text is black or white per colour =====
+const COLOURS = [
+  { bg: "#00E5FF", fg: "#000" }, // cyan
+  { bg: "#FF00B8", fg: "#000" }, // magenta
+  { bg: "#FF2BD6", fg: "#000" }, // fuchsia
+  { bg: "#FFE600", fg: "#000" }, // yellow
+  { bg: "#39FF14", fg: "#000" }, // lime
+  { bg: "#FF6B00", fg: "#000" }, // orange
+  { bg: "#2D5BFF", fg: "#fff" }, // electric blue
+  { bg: "#FF1744", fg: "#fff" }, // red
+  { bg: "#8A2BFF", fg: "#fff" }  // violet
+];
+
+// ===== LOGIC =====
+const POOL = [
+  ...TECHNICAL.map(t => ({ text: t, cat: "Technical" })),
+  ...GENRE.map(t => ({ text: t, cat: "Genre" })),
+  ...OBLIQUE.map(t => ({ text: t, cat: "Oblique" })),
+  ...ARTISTS.map(t => ({ text: t, cat: "Artist" }))
+];
+
+const labelEl = document.getElementById("label");
+const promptEl = document.getElementById("prompt");
+const meta = document.querySelector('meta[name="theme-color"]');
+let lastPrompt = -1, lastColour = 0;
+
+function pick(len, last) {
+  if (len < 2) return 0;
+  let i;
+  do { i = Math.floor(Math.random() * len); } while (i === last);
+  return i;
+}
+
+function next() {
+  lastPrompt = pick(POOL.length, lastPrompt);
+  lastColour = pick(COLOURS.length, lastColour);
+  const p = POOL[lastPrompt], c = COLOURS[lastColour];
+  document.body.style.backgroundColor = c.bg;
+  document.body.style.color = c.fg;
+  meta.setAttribute("content", c.bg);
+  labelEl.textContent = p.cat;
+  promptEl.textContent = p.text;
+}
+
+document.addEventListener("pointerdown", next);
+document.addEventListener("keydown", e => {
+  if (e.code === "Space" || e.code === "Enter") { e.preventDefault(); next(); }
+});
+</script>
+</body>
+</html>
